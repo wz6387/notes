@@ -1,0 +1,3 @@
+auto pClass = Magic_Singleton<MyClass>::GetInstance("create");
+
+Magic_Singleton<MyClass>::DesInstance();
