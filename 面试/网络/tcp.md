@@ -47,6 +47,10 @@ TCP头部结构如下图：
 
 ![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9qaWFudHVrdS1saXdlbmJpbi5vc3MtY24tc2hhbmdoYWkuYWxpeXVuY3MuY29tLyVFOSU5RCVBMiVFNyVCQiU4RiVFNSU5MCU4OCVFOSU5QiU4Ni8lRTUlOUIlOUIlRTYlQUMlQTElRTYlOEMlQTUlRTYlODklOEIucG5n?x-oss-process=image/format,png)
 
-为什么是三次握手不是二次或四次？
+**为什么是三次握手不是二次或四次？**
 
 三次握手的目的是为了防止已失效的连接请求突然又传到服务端，因而产生错误。比如存在下面情况：client发出的第一个连接请求在网络上长时间滞留，以致延误到连接释放后才到达server。本来这是已失效的报文，但server收到此报文后，误认为client发出了一个新的连接请求，于是就向client发送确认报文，同意建立连接。如果不采用三次握手，那么新的连接就建立了。由于client并没有发出建立连接请求，因此不会理睬server的确认，但server却一直等待client发来数据，因此server的资源就浪费了。采用三次握手，client不会向server的确认发出确认，server由于收不到确认，就知道client没有要求连接。
+
+**TIME_WAIT的意义**
+
+TIME_WAIT是指四次挥手中客户端接收了服务端的FIN报文并发送ACK报文给服务端后，仍然需要等待2MSL(Linux中2MSL默认是60秒)的过程。原因是假设网络是不可靠的，有可能最后一个ACK丢失，如果客户端发送的ACK丢失，服务端会再次发送FIN给客户端，所以TIME_WAIT状态就是用来重发可能丢失的ACK报文。
