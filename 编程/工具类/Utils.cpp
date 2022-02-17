@@ -147,6 +147,22 @@ void Utils::splitString(const std::string& s, const char* delim, std::vector<std
     delete[] buffer;
 }
 
+void Utils::splitString(const std::string& str, const std::string& delim, std::vector<std::string>& elems)
+{
+	std::string::size_type pos;
+	str += pattern;//扩展字符串以方便操作
+	int size = str.size();
+
+	for (int i = 0; i < size; i++) {
+		pos = str.find(pattern, i);
+		if (pos < size) {
+			std::string s = str.substr(i, pos - i);
+			elems.push_back(s);
+			i = pos + pattern.size() - 1;
+		}
+	}
+}
+
 std::string Utils::toLower(const std::string& data)
 {
 	std::string result(data);
