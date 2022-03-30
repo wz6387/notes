@@ -1,0 +1,3 @@
+安装完在base_type_define.h头部加上
+#define VLD_FORCE_ENABLE
+#include "C:\\Program Files (x86)\\Visual Leak Detector\\include\\vld.h"

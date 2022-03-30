@@ -1,0 +1,59 @@
+下载源码
+https://github.com/gperftools/gperftools/releases
+安装
+./configure
+make
+make install
+
+内存泄漏检测
+
+方法一：编译待检测程序
+gcc -g -o test main.c -ltcmalloc   
+
+设置相关的环境变量
+# which pprof
+          /usr/local/bin/pprof
+# export PPROF_PATH=/usr/local/bin/pprof 
+# env HEAPCHECK=normal   LD_PRELOAD="/usr/local/lib/libtcmalloc.so"  ./IntelligentAnalysisServer
+
+
+方法二：生成快照的方式
+LD_PRELOAD=/usr/local/lib/libtcmalloc.so HEAPCHECK=normal HEAPPROFILE=memtm ./IntelligentAnalysisServer
+随着程序的运行，会在当前目录下生成很多memtm.0001.heap、memtm.0002.heap、等
+
+生成报告
+pprof --pdf --base memtm.0001.heap IntelligentAnalysisServer memtm.0017.heap > graph.pdf
+
+cpu检测
+
+在安装gperftools时，执行./configure ，若出现如下输出，则需要安装libunwind
+$ configure: WARNING: No frame pointers and no libunwind. Using experimental backtrace capturing via libgcc. Expect crashy cpu profiler.
+
+查找并安装 libunwind ，之后再重新 ./configure 。
+$ sudo apt-cache search libunwind
+$ sudo apt-get install libunwind-dev
+# 重新
+$ ./configure
+
+编译并安装。
+$ make
+$ sudo make install
+
+不重新编译程序，动态检测当前运行程序的方法
+env LD_PRELOAD=/usr/local/lib/libprofiler.so CPUPROFILE=IntelligentAnalysisServer.prof ./IntelligentAnalysisServer PROFILE: interrupts/evictions/bytes = 5231/721/190744
+
+重新编译程序方法
+在代码中引入头文件#include <gperftools/profiler.h>
+在代码开始位置加入ProfilerStart("test.prof");
+在代码退出前加入ProfilerStop();
+
+在链接时加上-lprofiler
+$ g++ -g -Wall -O0 -std=c++11 test.cc -lprofiler
+
+最后使用命令运行程序
+./IntelligentAnalysisServer
+
+将分析结果生成pdf
+pprof --pdf IntelligentAnalysisServer IntelligentAnalysisServer.prof  > CpuProfiler.pdf
+
+

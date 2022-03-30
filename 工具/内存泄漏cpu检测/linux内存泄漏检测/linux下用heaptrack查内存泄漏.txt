@@ -1,0 +1,18 @@
+1.如何安装？
+ubuntu下apt-get install heaptrack
+2.如何抓取内存追踪信息？
+heaptrack --pid 进程pid
+3.追踪文件怎样查看？
+heaptrack_print heaptrack.APP.PID.gz | less
+4.如何分析？
+https://milianw.de/blog/heaptrack-a-heap-memory-profiler-for-linux.html
+
+解析文件分以下几部分：
+a.MOST CALLS TO ALLOCATION FUNCTIONS----申请堆空间最多的函数调用
+b.PEAK MEMORY CONSUMERS-----------------------峰值内存消耗最多的函数调用
+c.MOST TEMPORARY ALLOCATIONS----------------申请栈空间最多的函数调用
+
+扩展--待验证
+Memory Leaks
+Disabled by default, enable with?-l
+heaptrack -l --pid 进程pid(内存泄漏默认关闭，需要-l开启)
