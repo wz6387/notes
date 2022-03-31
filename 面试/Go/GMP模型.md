@@ -1,4 +1,4 @@
-​    Go引入了一个新概念：**协程**。协程与线程不同，它处于用户态，而线程属于内核态。协程必须绑定线程才能运行。由于它属于用户态，所以它的切换非常的轻量快速。
+Go引入了一个新概念：**协程**。协程与线程不同，它处于用户态，而线程属于内核态。协程必须绑定线程才能运行。由于它属于用户态，所以它的切换非常的轻量快速。
 
 ​    它的特点：
 
@@ -13,6 +13,10 @@
 
 ![img](https://img-blog.csdnimg.cn/20201222203831442.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ0MjA1Mjcy,size_16,color_FFFFFF,t_70)
 
++ M表示内核线程
++ P表示调度器的核心处理器，通常表示执行上下文
++ G代表协程
+
 线程想运行goroutine，必须先获取P，P中还包含了可运行的G队列
 
 ![img](https://img-blog.csdnimg.cn/20201222204129565.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ0MjA1Mjcy,size_16,color_FFFFFF,t_70#pic_center)
@@ -22,7 +26,7 @@
 + P：所有的P都在程序启动时创建，并保存在数组中，最多有GOMAXPROCS(可配置)个
 + M：线程想要运行任务就得获取P，从P的本地队列获取G，P队列为空时，M也会尝试从全局队列拿一批G放到P的本地队列，或从其它P的本地队列偷一半放到自己P的本地队列
 
-
+***调度的本质就是 P 将 G 合理的分配给某个 M 的过程***
 
 **调度流程**
 
