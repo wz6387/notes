@@ -18,6 +18,7 @@ public:
 	static void splitString(const std::string& str, char delim, std::vector<std::string>& elems);
 	static void splitString(const std::string& str, const char* delim, std::vector<std::string>& elems);
 	static void splitString(const std::string& str, const std::string& delim, std::vector<std::string>& elems);
+	static void Utils::split(const std::string &text, std::vector<std::string> &tokens, const std::string &delimiter = " ");
 	
 	// 字符串转大小写
 	static std::string toLower(const std::string& data);

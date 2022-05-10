@@ -163,6 +163,16 @@ void Utils::splitString(const std::string& str, const std::string& pattern, std:
 	}
 }
 
+void Utils::split(const std::string &text, std::vector<std::string> &tokens, const std::string &delimiter) {
+	std::string::size_type bPos = text.find_first_not_of(delimiter, 0);
+	std::string::size_type ePos = text.find_first_of(delimiter, bPos);
+	while (std::string::npos != bPos || std::string::npos != ePos) {
+		tokens.emplace_back(text.substr(bPos, ePos - bPos));
+		bPos = text.find_first_not_of(delimiter, ePos);
+		ePos = text.find_first_of(delimiter, bPos);
+	}
+}
+
 std::string Utils::toLower(const std::string& data)
 {
 	std::string result(data);
