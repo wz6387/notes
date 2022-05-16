@@ -7,18 +7,17 @@ make install
 
 内存泄漏检测
 
-方法一：编译待检测程序
+方法一：编译待检测程序，将tcmalloc编译进工程
 gcc -g -o test main.c -ltcmalloc   
 
 设置相关的环境变量
 # which pprof
           /usr/local/bin/pprof
-# export PPROF_PATH=/usr/local/bin/pprof 
-# env HEAPCHECK=normal   LD_PRELOAD="/usr/local/lib/libtcmalloc.so"  ./IntelligentAnalysisServer
+# env PPROF_PATH=/usr/local/bin/pprof  HEAPCHECK=normal   ./IntelligentAnalysisServer
 
 
 方法二：生成快照的方式
-LD_PRELOAD=/usr/local/lib/libtcmalloc.so HEAPCHECK=normal HEAPPROFILE=memtm ./IntelligentAnalysisServer
+env LD_PRELOAD=/usr/local/lib/libtcmalloc.so HEAPCHECK=normal HEAPPROFILE=memtm ./IntelligentAnalysisServer
 随着程序的运行，会在当前目录下生成很多memtm.0001.heap、memtm.0002.heap、等
 
 生成报告
