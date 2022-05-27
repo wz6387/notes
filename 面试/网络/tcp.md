@@ -114,9 +114,7 @@ TCP传输的每个字节都有序列号，接收方收到数据后，对发送�
 
 流量控制依赖于滑动窗口，用于控制发送方的发送速率；拥塞控制依赖于拥塞窗口，用于当网络拥塞时，控制数据发送
 
-
-
-**9、数字签名**
+### 9、数字签名
 
 由于传输的文件可能很大，对整个文件加密，代价太大，因此需要用到信息摘要和数字签名。所谓信息摘要就是用某种HASH(MD5，SHA1)算法将消息明文转换成固定长度的字符。数字签名就是对信息摘要做非对称加密。数字签名过程如下图：
 
@@ -126,7 +124,7 @@ TCP传输的每个字节都有序列号，接收方收到数据后，对发送�
 
 ![image-20220218114418074](C:\Users\A10727\AppData\Roaming\Typora\typora-user-images\image-20220218114418074.png)
 
-**10、数字证书**
+### 10、数字证书
 
 是在数字签名的基础上多做了一个CA的数字签名，如图：
 
@@ -140,3 +138,75 @@ TCP传输的每个字节都有序列号，接收方收到数据后，对发送�
 
 ![image-20220218115355190](C:\Users\A10727\AppData\Roaming\Typora\typora-user-images\image-20220218115355190.png)
 
+### 11、大量的TIME_WAIT
+
+TIME_WAIT是主动关闭连接的一方出现的状态
+
+什么情况下会出现大量的TIME_WAIT？大量的短连接
+
+出现大量TIME_WAIT有什么问题？导致新连接创建失败
+
+解决方法：
+
+（1）短连接改为长连接，但长连接太多会导致服务器性能问题
+
+（2）IO复用
+
+```c
+#include <sys/types.h>
+#include <sys/socket.h>
+int setsockopt(int sockfd, int level, int optname,
+                const void *optval, socklen_t optlen);
+```
+
+具体应用举例：
+
+设置调用close(socket)后,仍可继续重用该socket。调用close(socket)一般不会立即关闭socket，而经历TIME_WAIT的过程。
+BOOL bReuseaddr = TRUE;
+setsockopt( s, SOL_SOCKET, SO_REUSEADDR, ( const char* )&bReuseaddr, sizeof( BOOL ) );
+如果要已经处于连接状态的soket在调用closesocket()后强制关闭，不经历TIME_WAIT的过程：
+BOOL bDontLinger = FALSE;
+setsockopt( s, SOL_SOCKET, SO_DONTLINGER, ( const char* )&bDontLinger, sizeof( BOOL ) );
+
+（3）修改内核参数：
+
+```shell
+vi  /etc/sysctl.conf
+```
+
+添加配置信息
+
+![img](https://img-blog.csdn.net/20180705144432613?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0lUX3hpYW95ZQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+
+让参数配置生效
+/sbin/sysctl -p
+
+### 12、SO_LINGER的作用
+
+struct linger {
+
+   int l_onoff;
+
+   int l_linger;
+
+};
+
+SO_LINGER的作用：设置函数close()关闭TCP连接时的行为。
+
+缺省close()行为：如果有数据在发送缓冲区，继续把数据发送给对方，等待确认，然后返回。
+
+可以将缺省行为设置为以下两种：
+
+（1）立即关闭连接，发送RST来关闭连接，发送缓冲区的数据将被丢弃。主动关闭一方将跳过TIMEWAIT，直接进入CLOSED。网上很多人想利用这点解决大量TIMEWAIT的问题，这并不是一个好主意，这种关闭方式的用途不在这，实际用途在服务器在应用层的需求。
+
+（2）将连接设置一个超时，如果发送缓冲区有数据，进程进入睡眠，内核进入定时状态尽量去发送这些数据。
+
+​         在超时之前，如果数据都发送完且被对方确认，内核用正常的FIN|ACK|FIN|ACK来关闭连接；
+
+​         如果超时之后，数据仍未能发送成功及确认，用方式（1）关闭连接。close返回EWOULDBLOCK；
+
+l_onoff为0，则该选项关闭，l_linger的值被忽略，close()用上述缺省方式关闭连接。
+
+l_onoff非0，l_linger为0，close()用上述a方式关闭连接。
+
+l_onoff非0，l_linger非0，close()用上述b方式关闭连接。
