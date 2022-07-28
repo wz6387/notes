@@ -23,6 +23,8 @@ env LD_PRELOAD=/usr/local/lib/libtcmalloc.so HEAPCHECK=normal HEAPPROFILE=memtm 
 生成报告
 pprof --pdf --base memtm.0001.heap IntelligentAnalysisServer memtm.0017.heap > graph.pdf
 
+-----------------------------------------------------------------------------------------------------------------
+
 cpu检测
 
 在安装gperftools时，执行./configure ，若出现如下输出，则需要安装libunwind
@@ -38,10 +40,10 @@ $ ./configure
 $ make
 $ sudo make install
 
-不重新编译程序，动态检测当前运行程序的方法
+1、不重新编译程序方法。必须要正常结束程序才能生成有效文件
 env LD_PRELOAD=/usr/local/lib/libprofiler.so CPUPROFILE=IntelligentAnalysisServer.prof ./IntelligentAnalysisServer PROFILE: interrupts/evictions/bytes = 5231/721/190744
 
-重新编译程序方法
+2、重新编译程序方法。必须要正常结束程序才能生成有效文件
 在代码中引入头文件#include <gperftools/profiler.h>
 在代码开始位置加入ProfilerStart("test.prof");
 在代码退出前加入ProfilerStop();

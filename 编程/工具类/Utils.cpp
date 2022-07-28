@@ -131,24 +131,11 @@ void Utils::splitString(const std::string& src, char delim, std::vector<std::str
 	}
 }
 
-void Utils::splitString(const std::string& s, const char* delim, std::vector<std::string>& elems)
-{
-	if (s.empty()) {
-		return;
-	}
-    elems.clear();                                 // 1.
-    char* buffer = new char[s.size() + 1];      // 2.
-    buffer[s.size()] = '\0';
-    std::copy(s.begin(), s.end(), buffer);      // 3.
-    char* p = strtok(buffer, delim);       // 4.
-    do {
-        elems.push_back(p);                        // 5.
-    } while ((p = strtok(NULL, delim)));   // 6.
-    delete[] buffer;
-}
-
 void Utils::splitString(const std::string& str, const std::string& pattern, std::vector<std::string>& elems)
 {
+	if (str.empty()) {
+		return;
+	}
 	std::string::size_type pos;
 	std::string tmpStr = str + pattern;//扩展字符串以方便操作
 	int size = tmpStr.size();

@@ -16,7 +16,6 @@ public:
 	
 	//字符串str使用分隔符delim进行分割，得到tokens列表
 	static void splitString(const std::string& str, char delim, std::vector<std::string>& elems);
-	static void splitString(const std::string& str, const char* delim, std::vector<std::string>& elems);
 	static void splitString(const std::string& str, const std::string& delim, std::vector<std::string>& elems);
 	static void Utils::split(const std::string &text, std::vector<std::string> &tokens, const std::string &delimiter = " ");
 	
