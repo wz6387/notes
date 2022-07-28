@@ -118,7 +118,7 @@ std::string Utils::utf8ToGbk(const std::string& utf8Str)
     return unicodeStr;
 }
 
-void Utils::splitString(const std::string& src, char delim, std::vector<std::string>& elems)
+void Utils::split(const std::string& src, char delim, std::vector<std::string>& elems)
 {
 	std::stringstream ss(src);
 	std::string item;
@@ -131,22 +131,26 @@ void Utils::splitString(const std::string& src, char delim, std::vector<std::str
 	}
 }
 
-void Utils::splitString(const std::string& str, const std::string& pattern, std::vector<std::string>& elems)
+void Utils::split(const std::string & src, const std::string & delim, std::vector<std::string> & elems)
 {
-	if (str.empty()) {
+	if (src.empty()) {
 		return;
 	}
-	std::string::size_type pos;
-	std::string tmpStr = str + pattern;//扩展字符串以方便操作
-	int size = tmpStr.size();
 
-	for (int i = 0; i < size; i++) {
-		pos = tmpStr.find(pattern, i);
-		if (pos < size) {
-			std::string s = tmpStr.substr(i, pos - i);
-			elems.push_back(s);
-			i = pos + pattern.size() - 1;
+	std::string tmp;
+	std::string::size_type beg = src.find_first_not_of(delim);
+	std::string::size_type end = 0;
+
+	while (beg < src.size()) {
+		end = src.find(delim, beg);
+		if (end != std::string::npos) {
+			tmp = src.substr(beg, end - beg);
+			beg = end + delim.length();
+		} else {
+			tmp = src.substr(beg);
+			beg = end;
 		}
+		elems.push_back(tmp);
 	}
 }
 
