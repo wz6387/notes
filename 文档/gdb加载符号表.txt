@@ -1,0 +1,7 @@
+(1) gdb -s /mnt/usb/IntelligentAnalysisServer.symbol -e /mnt/mtd/IntelligentAnalysisServer -c /mnt/usb/core-!mnt!mtd!IntelligentAnalysisServer-ReStartServer-1687330130-12596
+(2) info sharedlibrary  //查询符号表地址
+
+
+(3) add-symbol-file /usr/local/lib/libxxx.symbol 0x0000effe421d26a0
+
+   //加载的地址为第一个命令查到的地址。

@@ -1,0 +1,10 @@
+asan使用(asan能检测出各类内存问题)
+
+1、编译程序的时候加上选项：
+-fsanitize=address -O1 -fno-omit-frame-pointer
+
+链接增加asan库：
+-lasan
+
+2、运行时
+LD_PRELOAD="/tmp/libasan.so.3.0.0" ./进程
