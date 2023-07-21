@@ -1,0 +1,6 @@
+Ç©Ãû£º
+SignTool sign /f MyCert.pfx /p MyPassword MyControl.exe
+
+
+Àý×Ó£º
+signtool.exe sign /f C:\Users\A10727\Desktop\server.p12 /p 123456 "NVMS Client x64 Neutral Ver2.1.4.30717.exe"

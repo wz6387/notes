@@ -5,3 +5,8 @@
 (3) add-symbol-file /usr/local/lib/libxxx.symbol 0x0000effe421d26a0
 
    //加载的地址为第一个命令查到的地址。
+
+
+加载动态库
+(gdb) set solib-search-path /mnt/usb
+(gdb) set sysroot /mnt/usb/libNVRServerSDK_ForIASrv.so
