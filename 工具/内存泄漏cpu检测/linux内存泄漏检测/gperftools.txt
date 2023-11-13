@@ -25,6 +25,9 @@ pprof --pdf --base memtm.0001.heap IntelligentAnalysisServer memtm.0017.heap > g
 
 -----------------------------------------------------------------------------------------------------------------
 
+如果生成pdf的时候提示 sh: 1: dot: not found ,需要安装 sudo apt-get install graphviz
+
+
 cpu检测
 
 在安装gperftools时，执行./configure ，若出现如下输出，则需要安装libunwind
