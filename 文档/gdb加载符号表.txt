@@ -10,3 +10,42 @@
 加载动态库
 (gdb) set solib-search-path /mnt/usb
 (gdb) set sysroot /mnt/usb/libNVRServerSDK_ForIASrv.so
+
+
+aarch64-linux-addr2line -C -f -e libNVRServerSDK_ForIASrv.so 0x8a4880
+
+addr2line（根据地址查找代码行）
+当某个进程崩溃时，日志文件（/var/log/messages）中就会给出附加的信息，包括程序终止原因、故障地址，以及包含程序状态字（PSW）、通用寄存器和访问寄存器的简要寄存器转储。
+
+eg：Mar 31 11:34:28 l02 kernel: failing address: 0
+
+如果可执行文件包括调试符号（带-g编译的），使用addr2line，可以确定哪一行代码导致了问题。
+
+eg：addr2line –e exe addr
+
+其实gdb也有这个功能，不过addr2line的好处是，很多时候，bug很难重现，我们手上只有一份crash log。这样就可以利用addr2line找到对应的代码行，很方便。
+
+注意：
+
+该可执行程序用-g编译，使之带调试信息。
+如果crash在一个so里面，那addr2line不能直接给出代码行。
+参数：
+
+-a 在显示函数名或文件行号前显示地址
+-b 指定二进制文件格式
+-C 解析C++符号为用户级的名称,可指定解析样式
+-e 指定二进制文件
+-f 同时显示函数名称
+-s 仅显示文件的基本名，而不是完整路径
+-i 展开内联函数
+-j 读取相对于指定节的偏移而不是绝对地址
+-p 每个位置都在一行显示
+
+
+mac崩溃文件ips定位
+atos  -o <Path to dSYM file>/Contents/Resources/DWARF/<binary image name> -l <load address> <address to symbolicate>
+
+load address是执行文件的加载地址，可以从Binary Images中看出来
+address to symbolicate是符号表中的地址
+
+例如：atos -o NVMS_Lite_Neutral_ver2.1.4.40116_dsym/dsym/libNetCommon.dsym/Contents/Resources/DWARF/libNetCommon.dylib  -l 0x10dcb2000 0x10dd21e1a
