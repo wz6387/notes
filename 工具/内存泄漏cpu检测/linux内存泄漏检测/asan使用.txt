@@ -1,4 +1,4 @@
-asan使用
+asan（address sanitizer），适用于c/c++程序的动态内存错误检测器。gcc 4.8版本后才加入asan
 
 1、编译程序的时候加上选项：
 -fsanitize=address -O1 -fno-omit-frame-pointer
