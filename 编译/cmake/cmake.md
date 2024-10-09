@@ -94,6 +94,12 @@ add_library(muduo_base ${base_SRCS})
 target_link_libraries(muduo pthread rt)
 ```
 
+11、添加搜索库目录
+
+```cmake
+LINK_DIRECTORIES(${LIBRARY_OUTPUT_PATH})
+```
+
 
 
 

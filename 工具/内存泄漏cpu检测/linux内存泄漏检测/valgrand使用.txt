@@ -1,0 +1,13 @@
+1、安装valgrind
+     tar -jxvf valgrind-3.18.1.tar.bz2
+     cd valgrind-3.18.1
+     ./configure
+     make
+     make install
+
+2、检测内存泄漏
+    valgrand --tool=memcheck --leak-check=full --log-file=a.log ./programe
+ 
+--tool=memcheck  ： 检测内存问题
+--leak-check=full   :    查看内存泄漏详细信息
+--log-file       :  输出日志
