@@ -1,0 +1,96 @@
+﻿1、Linux测试端口
+wget ip:port
+
+2、Linux抓包
+tcpdump -i eth0 host 210.27.48.1 -w ./target.cap
+tcpdump -i eth0 host 210.27.48.1 -w ./target.pcap
+
+3、生成core文件
+//查看core文件指定大小，如果是0，则不会产生core文件
+ulimit -a   
+
+//表示core文件大小不受限制，该命令只在当前会话中有效
+ulimit -c unlimited
+
+//如果需要长久有效，需修改环境配置文件
+用vi打开/etc/profile文件，跳到文件末尾，插入一行 ulimit -c unlimited  保存退出
+source /etc/profile 立即生效
+
+//另外可以通过修改kernel的参数，指定内核转储所生成的core文件的路径和文件名。
+//可以通过在/etc/sysctl.conf文件中，对sysctl变量kernel.core_pattern的设置。
+
+ #vim /etc/sysctl.conf 然后，在sysctl.conf文件中添加下面两句话：
+kernel.core_pattern = /var/core/core_%e_%p_%t
+然后执行sysctl -p /etc/sysctl.conf即可
+
+4、gdb调试core
+gdb ./test core文件
+显示完整字符串
+set print element 0
+
+bt 查看堆栈
+
+5、查看端口使用句柄数量
+netstat -anp | grep 6080 | wc -l 
+
+6、动态库查找路径
+方法一： export  LD_LIBRARY_PATH=LD_LIBRARY_PATH:/XXX 但是退出当前终端后就失效
+方法二： 修改~/.bashrc或~/.bash_profile或系统级别的/etc/profile
+    1. 在其中添加例如export LD_LIBRARY_PATH=/opt/ActiveP/lib:$LD_LIBRARY_PATH
+
+    2. source .bashrc  (Source命令也称为“点命令”，也就是一个点符号（.）。source命令通常用于重新执行刚修改的初始化文件，使之立即生效，而不必注销并重新登录)
+
+方法三：这个没有修改LD_LIBRARY_PATH但是效果是一样的实现动态库的查找，
+    1. /etc/ld.so.conf下面加一行/usr/local/mysql/lib
+    2. 保存后执行 ldconfig  生效
+
+7、pstack+进程号
+
+8、安装java
+1）先解压压缩包 tar -zxvf jdk-8u321-linux-x64.tar.gz
+2）在/usr/lib下新建jdk目录 mkdir jdk
+3）将解压的jdk文件移动到/usr/lib/jdk目录下 mv ~/jdk1.8.0_321 /usr/lib/jdk
+4）配置java环境
+vi /etc/profile
+在最后添加内容
+#set java env
+export JAVA_HOME=/usr/lib/jdk/jdk1.8.0_202
+export JRE_HOME=${JAVA_HOME}/jre    
+export CLASSPATH=.:${JAVA_HOME}/lib:${JRE_HOME}/lib    
+export PATH=${JAVA_HOME}/bin:$PATH
+执行命令使修改生效
+source /etc/profile
+5）测试安装是否成功
+java -version
+
+
+9、列出var目录下占用空间最大的10个目录
+du -sh /var/* | sort -rh | head -n 10
+
+统计目录下文件个数
+ls -l | grep -v '^d' | wc -l
+
+10、查看目录挂载在哪个磁盘
+df /path/to/directory
+
+11、开机自启动
+      a、创建服务配置文件
+           touch /etc/systemd/system/my_service.service
+      b、配置编辑文件
+[Unit]
+Description=My Custom Service
+
+[Service]
+ExecStart=/path/to/my_service
+Restart=on-failure
+WorkingDirectory=/path/to/working/directory
+
+[Install]
+WantedBy=default.target
+       c、重新加载配置
+            systemctl daemon-reload
+       d、启用服务
+            systemctl enable my_service.service
+       e、启动和停止服务
+            systemctl start my_service.service
+            systemctl stop my_service.service
