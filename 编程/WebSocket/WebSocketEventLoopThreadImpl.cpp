@@ -30,8 +30,11 @@ void WebSocketEventLoopThreadImpl::threadFunc(void* arg)
 {
 	WebSocketEventLoop loop;
 	WebSocketEventLoopThreadImpl* ptr = (WebSocketEventLoopThreadImpl*)arg;
-	ptr->loop_ = &loop;
-	ptr->cond_.notify_one();
+	{
+		std::unique_lock<std::mutex> locker(ptr->mutex_);
+		ptr->loop_ = &loop;
+		ptr->cond_.notify_one();
+	}
 	ptr->loop_->loop();
 	ptr->loop_ = NULL;
 }
